@@ -148,7 +148,7 @@ function evaluateUserAnswer(problem) {
     var correctAnswer = problem.answerKey;
     
     if (correctAnswer[0] === "Option 0") {          // written response scores are still To Be Determined
-        return "TBD";
+        return "Mr. Bloom will grade written responses separately.";
     }
     
     if (typeof(userAnswer[0]) === 'object') {      // must be a select-multiple question
@@ -190,7 +190,7 @@ function evaluateUserAnswer(problem) {
 Display User Submission - create new window + HTML tags 
 ******************************************************/
 function displayAnswers() {
-    var DispWin = window.open('','NewWin', 'toolbar=no, status=no, width=800, height=600');
+    var DispWin = window.open('','NewWin', 'toolbar=no, status=no, width=1050, height=880');
     var message = "";
     
     // HTML HEADER
@@ -202,9 +202,10 @@ function displayAnswers() {
 
     // HTML BODY
     message += "<body>" + "<div class='container-fluid'>" + "<div class='container-top'>" + "<div class='page-header'>";              // TOP CONTAINER
-    message += "<h1 id='title'>Introduction to HTML and CSS</h1><h3 id='subtitle'>Web-Development, Fall 2017</h3></div>" + "<hr></div>";
+    message += "<h1 id='title'>Introduction to HTML and CSS</h1><h3 id='subtitle'>Web-Development, Fall 2017</h3></div>" + "</div>";
     message += "<div class='container-main'>" + "<section id='results-window'>" + "<div class='row'>" + "<div class='col-xs-12'>";
-    message += "<h3>Thank you for completing this assignment. Please print/download this receipt for your records.</h3></div></div>";
+    message += "<h3>Thank you for completing this assignment. Please " + "<input type=button name=print value='save' onClick='window.print()'>";
+    message += " this receipt for your records.</h3></div></div>";
     message += "<hr><div class='row'>" + "<div class='col-xs-12'>" + "<h2>Student Info</h2></div></div>"; 
     message += "<div class='row'>" + "<div class='col-xs-4'>" + "<div class='row'>" + "<div class='col-xs-4'>";
     message += "<h3><b>Name:</b></h3></div>" + "<div class='col-xs-8'><h3>" + student.name + "</h3></div></div></div>";
@@ -212,7 +213,7 @@ function displayAnswers() {
     message += "<h3><b>Email:</b></h3></div>" + "<div class='col-xs-8'><h3>" + student.email + "</h3></div></div></div>";
     message += "<div class='col-xs-4'>" + "<div class='row'>" + "<div class='col-xs-4'>";
     message += "<h3><b>Date:</b></h3></div>" + "<div class='col-xs-8'><h3>" + student.date + "</h3></div></div></div></div>";
-    message += "<hr><div class='row'>" + "<div class='col-xs-12'>" + "<h2>Lesson 1 Title</h2></div></div><br>";                  // what is the title? document.querySelector ********
+    message += "<hr><div class='row'>" + "<div class='col-xs-12'><h2>" + document.querySelector("#lesson-title").innerText +"</h2></div></div><br>";
     
     var answerUserString = "INCOMPLETE";
     var answerKeyString = "INCOMPLETE";
@@ -227,19 +228,43 @@ function displayAnswers() {
         
         var problemScoreString = evaluateUserAnswer(problem);
         
-        message += "<div class='row'>" + "<div class='col-xs-3'>" + "<h3><b>Question " + problem.number + ":" + "</b></h3></div>";
-        message += "<div class='col-xs-9'><h3>" + problem.question + "</h3></div></div>";
-        message += "<div class='row'>" + "<div class='col-xs-3'>" + "<h3><b>Your Answer:</b></h3></div>";
-        message += "<div class='col-xs-9'><h3>" + answerUserString + "</h3></div></div>";                           // come back to, never a String
-        message += "<div class='row'><div class='col-xs-3'>" + "<h3><b>Correct Answer:</b></h3></div>";
-        message += "<div class='col-xs-9'><h3>" + answerKeyString + "</h3></div></div>";                            // come back to, not always a String
-        message += "<div class='row'><div class='col-xs-3'>" + "<h3><b>Your Score:</b></h3></div>";
-        message += "<div class='col-xs-9'><h3>" + problemScoreString + "</h3></div></div><br>";                      // get score, need new function
+        message += "<div class='row'>" + "<div class='col-xs-2'>" + "<b>Question " + problem.number + "</b></div>";
+        message += "<div class='col-xs-1'>" + "<i class='fa fa-lg fa-question pull-right' aria-hidden='true'></i></div>";
+        message += "<div class='col-xs-9'>" + problem.question + "</div></div><hr>";
+        message += "<div class='row'>" + "<div class='col-xs-2'>" + "<b>Your Answer</b></div>";
+        message += "<div class='col-xs-1'><i class='fa fa-lg fa-pencil pull-right' aria-hidden='true'></i></div>";
+        
+        // IF user is neither correct or incorrect bec/ it's a Written Response problem, italicize unscored field
+        if (problemScoreString.includes("incorrect") === false && problemScoreString.includes("correct") === false) {
+            message += "<div class='col-xs-9'>" + answerUserString + "</div></div><hr>";
+            message += "<div class='row'><div class='col-xs-2'>" + "<b>Correct Answer</b></div>";
+            message += "<div class='col-xs-1'><i class='fa fa-lg fa-pencil pull-right' aria-hidden='true'></i></div>";
+            message += "<div class='col-xs-9'>" + answerKeyString + "</div></div><hr>";
+            message += "<div class='row'><div class='col-xs-2'>" + "<b>Score</b></div>";
+            message += "<div class='col-xs-1'><i class='fa fa-lg fa-star pull-right' aria-hidden='true'></i></div>";
+            message += "<div class='col-xs-9'><em>" + problemScoreString + "</em></div></div><hr><br>";
+        }
+        else {
+            message += "<div class='col-xs-8'>" + answerUserString + "</div><div class='col-xs-1'>";
+            if (problemScoreString.includes("incorrect") === false) {
+                message += "<i class='fa fa-lg fa-check-square-o pull-right' aria-hidden='true'></i></div></div><hr>";
+            }
+            else {          // IF user is incorrect, display "Correct Answer" field so they can see what they did wrong
+                message += "<i class='fa fa-lg fa-square-o pull-right' aria-hidden='true'></i></div></div><hr>";
+                message += "<div class='row'><div class='col-xs-2'>" + "<b>Correct Answer</b></div>";
+                message += "<div class='col-xs-1'><i class='fa fa-lg fa-pencil pull-right' aria-hidden='true'></i></div>";
+                message += "<div class='col-xs-9'>" + answerKeyString + "</div></div><hr>";
+                
+            }
+            message += "<div class='row'><div class='col-xs-2'>" + "<b>Score</b></div>";
+            message += "<div class='col-xs-1'><i class='fa fa-lg fa-star pull-right' aria-hidden='true'></i></div>";
+            message += "<div class='col-xs-9'>" + problemScoreString + "</div></div><hr><br>";
+        }
     }
-
     message += "</section>" + "</div>" + "</div>" + "</body>";
 
     DispWin.document.write(message);
+    DispWin.print();
 }
 
 /***************************************************
