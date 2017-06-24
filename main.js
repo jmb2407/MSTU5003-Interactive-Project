@@ -195,9 +195,10 @@ function displayAnswers() {
     
     // HTML HEADER
     message += "<head><title>Mr. Bloom's Computer Science Class</title>";
-    message += "<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'></head>";
-    message += "<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>";
-    message += "<link type='text/css' rel='stylesheet' href='studentStyle.css'/>";
+    message += "<link type='text/css' rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>";
+    message += "<link type='text/css' rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>";
+    message += "<link type='text/css' rel='stylesheet' href='styles/studentStyle.css'/>";
+    message += "</head>";
 
     // HTML BODY
     message += "<body>" + "<div class='container-fluid'>" + "<div class='container-top'>" + "<div class='page-header'>";              // TOP CONTAINER
