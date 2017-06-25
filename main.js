@@ -22,7 +22,9 @@ var student = {
     date: "",
     acceptTerms: false,
     submitted: false,
-    completion: "0%"
+    completion: "0%",
+    userScore: 0,
+    possibleScore: 0
 };
 
 // each answer is an object with three properties (question, answer, hint)
@@ -141,13 +143,13 @@ function compareTwoArrays(array1, array2) {
 }
 
 function evaluateUserAnswer(problem) {
-    var scoreString = "You are ";
+    var scoreString = "";
     var countCorrect = 0;
     var identicalArrays = false;
     var userAnswer = problem.answerUser;
     var correctAnswer = problem.answerKey;
     
-    if (correctAnswer[0] === "Option 0") {          // written response scores are still To Be Determined
+    if (correctAnswer[0] === "Option 0") {          // written responses will be reviewed/scored separately
         return "Mr. Bloom will grade written responses separately.";
     }
     
@@ -168,19 +170,24 @@ function evaluateUserAnswer(problem) {
         }
     }
     
+    student.userScore += countCorrect;
+    
     if (countCorrect === correctAnswer.length) {
-        scoreString += "correct! " + String(countCorrect) + " / " + String(correctAnswer.length) + " points";
+        scoreString += "correct " + String(countCorrect) + "/" + String(correctAnswer.length) + " points";
+        student.possibleScore += correctAnswer.length;
     }
     else if (typeof(correctAnswer[0]) !== 'object') {
         if (countCorrect === 1 && correctAnswer.length === 2) {
-            scoreString += "correct! " + String(countCorrect) + " / 1 points";
+            scoreString += "correct " + String(countCorrect) + "/1 points";
         }
         else {
-            scoreString += "incorrect! 0 / 1 points";
+            scoreString += "incorrect 0/1 points";
         }
+        student.possibleScore += 1;
     }
     else {
-        scoreString += "incorrect. 0 / " + String(correctAnswer.length) + " points"; 
+        scoreString += "incorrect " + String(countCorrect) + "/" + String(correctAnswer.length) + " points";
+        student.possibleScore += correctAnswer.length;
     }
     return scoreString;
 }
@@ -228,43 +235,71 @@ function displayAnswers() {
         
         var problemScoreString = evaluateUserAnswer(problem);
         
+        message += "<br>";      // add spacing between problems
         message += "<div class='row'>" + "<div class='col-xs-2'>" + "<b>Question " + problem.number + "</b></div>";
-        message += "<div class='col-xs-1'>" + "<i class='fa fa-lg fa-question pull-right' aria-hidden='true'></i></div>";
+        message += "<div class='col-xs-1'>" + "<i class='fa fa-lg fa-question-circle pull-right' aria-hidden='true'></i></div>";
         message += "<div class='col-xs-9'>" + problem.question + "</div></div><hr>";
         message += "<div class='row'>" + "<div class='col-xs-2'>" + "<b>Your Answer</b></div>";
-        message += "<div class='col-xs-1'><i class='fa fa-lg fa-pencil pull-right' aria-hidden='true'></i></div>";
         
         // IF user is neither correct or incorrect bec/ it's a Written Response problem, italicize unscored field
         if (problemScoreString.includes("incorrect") === false && problemScoreString.includes("correct") === false) {
+            message += "<div class='col-xs-1'><i class='fa fa-lg fa-pencil-square pull-right' aria-hidden='true'></i></div>";
             message += "<div class='col-xs-9'>" + answerUserString + "</div></div><hr>";
             message += "<div class='row'><div class='col-xs-2'>" + "<b>Correct Answer</b></div>";
-            message += "<div class='col-xs-1'><i class='fa fa-lg fa-pencil pull-right' aria-hidden='true'></i></div>";
+            message += "<div class='col-xs-1'><i class='fa fa-lg fa-info-circle pull-right' aria-hidden='true'></i></div>";
             message += "<div class='col-xs-9'>" + answerKeyString + "</div></div><hr>";
-            message += "<div class='row'><div class='col-xs-2'>" + "<b>Score</b></div>";
-            message += "<div class='col-xs-1'><i class='fa fa-lg fa-star pull-right' aria-hidden='true'></i></div>";
-            message += "<div class='col-xs-9'><em>" + problemScoreString + "</em></div></div><hr><br>";
         }
         else {
-            message += "<div class='col-xs-8'>" + answerUserString + "</div><div class='col-xs-1'>";
-            if (problemScoreString.includes("incorrect") === false) {
-                message += "<i class='fa fa-lg fa-check-square-o pull-right' aria-hidden='true'></i></div></div><hr>";
+            message += "<div class='col-xs-1'><i class='fa fa-lg fa-list-ul pull-right' aria-hidden='true'></i></div>";
+            var locateSplit = answerUserString.indexOf(".  Option");
+            if (locateSplit !== -1) {
+                var string1 = answerUserString.slice(0, locateSplit+1);
+                var string2 = answerUserString.slice(locateSplit+2, answerUserString.length - 1);
+                message += "<div class='col-xs-8'>" + string1 + "<br>" + string2 + "</div><div class='col-xs-1'>";
             }
-            else {          // IF user is incorrect, display "Correct Answer" field so they can see what they did wrong
-                message += "<i class='fa fa-lg fa-square-o pull-right' aria-hidden='true'></i></div></div><hr>";
+            else {
+                message += "<div class='col-xs-8'>" + answerUserString + "</div><div class='col-xs-1'>";   
+            }
+            
+            var locatePoints = problemScoreString.indexOf("/");
+            var numRight = problemScoreString[locatePoints - 1];
+            var numTotal = problemScoreString[locatePoints + 1];
+            var numWrong = (numTotal - numRight);
+            
+            for (i = 0; i < numRight; i++) {
+                message += "<i class='fa fa-lg fa-check-square-o pull-right' aria-hidden='true'></i><br>";
+            }
+            for (i = 0; i < numWrong; i++) {
+                message += "<i class='fa fa-lg fa-square-o pull-right' aria-hidden='true'></i><br>";
+            }
+            message += "</div></div><hr>";
+            
+            if (problemScoreString.includes("incorrect") === true) {          // IF user is incorrect, display "Correct Answer" field so they can see what they did wrong
                 message += "<div class='row'><div class='col-xs-2'>" + "<b>Correct Answer</b></div>";
-                message += "<div class='col-xs-1'><i class='fa fa-lg fa-pencil pull-right' aria-hidden='true'></i></div>";
-                message += "<div class='col-xs-9'>" + answerKeyString + "</div></div><hr>";
+                message += "<div class='col-xs-1'><i class='fa fa-lg fa-info-circle pull-right' aria-hidden='true'></i></div>";
                 
+                var locateSplitKey = answerKeyString.indexOf(".  Option");
+                if (locateSplitKey !== -1) {
+                    var string3 = answerKeyString.slice(0, locateSplitKey+1);
+                    var string4 = answerKeyString.slice(locateSplitKey+2, answerKeyString.length - 1);
+                    message += "<div class='col-xs-9'>" + string3 + "<br>" + string4 + "</div>";
+                }
+                else {
+                    message += "<div class='col-xs-9'>" + answerKeyString + "</div>";
+                }
+                message += "</div><hr>";
             }
-            message += "<div class='row'><div class='col-xs-2'>" + "<b>Score</b></div>";
-            message += "<div class='col-xs-1'><i class='fa fa-lg fa-star pull-right' aria-hidden='true'></i></div>";
-            message += "<div class='col-xs-9'>" + problemScoreString + "</div></div><hr><br>";
         }
     }
+    
+    // Display student's total score on multiple-choice problems
+    message += "<div class='row'><div class='col-xs-2'>" + "<b>Total Score</b></div>";
+    message += "<div class='col-xs-1'><b class='pull-right'>" + student.userScore + " / " + student.possibleScore + "</b></div>";
+    message += "<div class='col-xs-9'>on multiple-choice problems</div></div><hr><br>";
+    
     message += "</section>" + "</div>" + "</div>" + "</body>";
 
     DispWin.document.write(message);
-    DispWin.print();
 }
 
 /***************************************************
