@@ -141,7 +141,7 @@
                                 <label for="question4" class="col-lg-2 col-form-label">Question 4</label>
                                 <div class="col-lg-10">
                                     <small id="Question5Help" class="form-text text-muted">Change the value of the "text-decoration" attribute for the h4, h5, and h6 elements from "underline" to "none". What happens when you do that? Select best answer from the dropdown menu.</small>
-                                    <select class="form-control" id="question4" aria-describedby="Question5Help" onchange="setAnswer(event)">
+                                    <select class="form-control" id="question4" aria-describedby="Question5Help" onchange="setAnswer(event)" value="">
                                         <option>The title, 'Meow meow meow meow' is no longer underlined.</option>
                                         <option>The 'Grumpy Cat' text is no longer underlined.</option>
                                         <option>The 'Nyan Cat' text is no longer underlined.</option>
@@ -196,8 +196,8 @@
                             </div>
                         </div>
                         <div class="col-lg-1">
-                            <!-- <button type="submit" class="btn btn-primary" onclick="submitResponses()">Submit</button> -->
                             <button id="submitButton" type="submit" class="btn btn-primary" onclick="submitResponses(event)">Submit</button>
+                            <button id="resetButton" type="submit" class="btn btn-danger" onclick="resetResponses(event)">Reset</button>
                         </div>
                     </fieldset>
                 </section>

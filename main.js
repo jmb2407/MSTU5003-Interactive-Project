@@ -448,8 +448,17 @@ function setTerms() {
 }
 
 
-function disableSubmitButton() {
-    document.querySelector('#submitButton').disabled = true;
+function changeSubmitButton(status) {
+    if (status === "enable") {
+        document.querySelector('#submitButton').disabled = false;                   // enable submit button
+        document.querySelector('#submitButton').classList.remove('btn-success');    
+        document.querySelector('#submitButton').classList.add('btn-primary');       // make it green to indicate successfull submit 
+    }
+    else if (status === "disable") {
+        document.querySelector('#submitButton').disabled = true;                    // disable submit button
+        document.querySelector('#submitButton').classList.remove('btn-primary');    
+        document.querySelector('#submitButton').classList.add('btn-success');       // make it green to indicate successfull submit   
+    }
 }
 
 
@@ -481,15 +490,13 @@ function verifyStudentAnswers() {
     console.log("num total = " + numTotal);
     
     for (question of problems) {
-        if (question.answerUser.length === 0) {
+        if (question.answerUser.length === 0) {         // keep track of unanswered questions
             noAnswer += (question.number + " ");
-            console.log(question.number + " not answered");
         }
-        else {
+        else {                                          // count number of answered questions
             numComplete += 1;
-            console.log(question.number + " answered");
         }
-    }                                                                       // calculate test completion percentage and round to 2 decimal places
+    }                                                   // calculate test completion percentage and round to 2 decimal places
     student.completion = String((numComplete / numTotal * 100).toFixed(2) + "%");   
     
     if (numComplete < numTotal) {
@@ -509,7 +516,41 @@ function submitResponses(event) {
     else {
         event.preventDefault();
         displayAnswers();
-        disableSubmitButton();
+        changeSubmitButton("disable");
         // email user
     }
+}
+
+
+function resetResponses(event) {
+    student.name = "";                                                      // reset student Object properties
+    student.email = "";
+    student.date = "";
+    student.acceptTerms = false;
+    student.submitted = false;
+    student.completion = "0%";
+    student.userScore = 0;
+    student.possibleScore = 0;
+    
+    var inputs = document.getElementsByTagName('input');
+    for (var i = 0; i < inputs.length; i++) {
+        console.dir(inputs[i]);
+        inputs[i].value = "";                                               // clears text input fields (single line)
+    }
+    
+    var textareas = document.getElementsByTagName('textarea');
+    for (i = 0; i < textareas.length; i++) {
+        textareas[i].value = "";                                            // clears textarea fields (multiple lines)
+    }
+    
+    var multipleChoice = document.getElementsByTagName('select');
+    for (i = 0; i < multipleChoice.length; i++) {
+        multipleChoice[i].value = "";                                       // clears select fields (multiple choice)
+    }
+    
+    var radios = document.getElementsByName('Question3Radios');
+    for (i = 0; i < radios.length; i++) {
+        radios[i].checked = false;                                          // clears radio select fields (multiple choice)
+    }
+    changeSubmitButton("enable");                                           // enable submit button, change color back to blue
 }
