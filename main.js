@@ -390,7 +390,6 @@ function getAnswer(event) {
         question = event.target.id;
         question = question.slice(-1);                                  // question number
         option = formatRadioButtonVal(event.target.value);              // get user selection = "option3" or "option1" right now, but needs a space + a capital
-        console.log("Option radio = " + option);
         value = event.target.parentElement.innerText;                   // get text associated with selection
         userAnswer = [question, option, value];                         // format user answer
     }
@@ -419,16 +418,34 @@ function getAnswer(event) {
         console.log("input type is not recognized");
     }
     
-    if (document.querySelector('#resetButton').disabled === true) {
-        document.querySelector('#resetButton').disabled = false;       // enable reset button bec/ user has entered some info in the form
-    }
     return userAnswer;
+}
+        
+ function numAnswers() {
+    var numIncomplete = 0;
+    var numTotal = problems.length;
+     
+    for (question of problems) {
+        if (question.answerUser.length === 0 || question.answerUser[1] === "") {         // keep track of unanswered questions
+            numIncomplete++;
+        }
+    }
+    var completed = (numTotal - numIncomplete);
+    return completed;
 }
 
 function setAnswer(event) {                                             // delegate tasks to helper functions
     var userAnswer = getAnswer(event);                                  // first, get the answer from the Event object and format it
     var updated = updateData(userAnswer);                               // then search database for corresponding question and update answerUser
     
+    var numCompleted = numAnswers();
+    if (numCompleted === 0) {                                           // disable reset button bec/ user hasn't completed any questions yet
+        changeResetButton("disable");
+    }
+    else {
+        changeResetButton("enable");
+    }
+
     if (updated === true) {
         console.log("database update succeeded, user answer recorded");
     }
@@ -468,6 +485,14 @@ function changeSubmitButton(status) {
     }
 }
 
+function changeResetButton(status) {
+    if (status === "enable") {
+        document.querySelector('#resetButton').disabled = false;                   // enable submit button
+    }
+    else if (status === "disable") {
+        document.querySelector('#resetButton').disabled = true;                    // disable submit button
+    }
+}
 
 function verifyStudentInfo() {
     if (student.name === "") {
@@ -493,8 +518,6 @@ function verifyStudentAnswers() {
     var noAnswer = "";
     var numComplete = 0;
     var numTotal = problems.length;
-    console.log("num complete = " + numComplete);
-    console.log("num total = " + numTotal);
     
     for (question of problems) {
         if (question.answerUser.length === 0) {         // keep track of unanswered questions
@@ -575,5 +598,5 @@ function resetResponses(event) {
     resetDatabases();                                                       // student database and problems database (only answerUser prop though)
     resetHTMLInputFields();
     changeSubmitButton("enable");                                           // enable submit button, change color back to blue
-    document.querySelector('#resetButton').disabled = true;                 // disable submit button now that all info has been erased
+    changeResetButton("disable");                                           // disable submit button now that all info has been erased
 }
