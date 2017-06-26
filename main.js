@@ -1,3 +1,26 @@
+/*
+var text = "hello world";
+var blob = new Blob([text], { type: 'text/plain' });
+var anchor = document.createElement('a');
+
+anchor.download = "studentDatabase.txt";
+anchor.href = window.URL.createObjectURL(blob);
+console.log(anchor.href);
+anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
+console.dir(anchor.dataset);
+anchor.click();
+*/
+
+function sendMail() {
+    var link = 'mailto:joshuabloom@me.com?subject=Student Database Update'
+             +'&body='+'string goes here TESTING';
+    window.location.href = link;
+    console.log("in sendMail");
+}
+
+/***************************************
+READ TEXT FILE FROM GITHUB REPO - student database
+***************************************/
 var TEXT_FILE_URL = "https://raw.githubusercontent.com/jmb2407/MSTU5003-Interactive-Project/master/studentDatabase.txt";
 
 var retrievedDatabaseString = "";
@@ -7,10 +30,12 @@ $(document).ready(function() {
         var retrievedDatabaseString = data;
         // var retrievedDatabaseObject = $(data);     if you wanted to select an HTML page instead
         console.log(retrievedDatabaseString);
+        var arrayOfLines = retrievedDatabaseString.split("\n");     // split string by line
+        arrayOfLines.push("hello,testing,123,new,new,new"); 
+        console.log(arrayOfLines);
     });
 });
 
-// loop over string and split by line and then by comma
 
 /***************************************
 Support Resources Navbar - popover()
@@ -99,8 +124,6 @@ var problems = [                                        // initialize array
     }
 ];
 
-console.log("problems array initially = " + problems);
-
 function changeAnswerToString(arrayAnswer) {
     var stringAnswer = "";
     if (typeof(arrayAnswer[0]) === "string" && arrayAnswer.length === 2) {         // instances where answerUser = [string, string] (problems 1-4 and 6)
@@ -111,7 +134,7 @@ function changeAnswerToString(arrayAnswer) {
             stringAnswer += arrayAnswer[0] + ": " + arrayAnswer[1];
         }
     }
-    else {                                                                         // instances where answerUser = [ [string, string] , [string, string] ] (problem 5)
+    else {                                     // instances where answerUser = [ [string, string] , [string, string] ] (problem 5)
         for (choice of arrayAnswer) {
             stringAnswer += choice[0] + ": " + choice[1] + "  ";
         }
