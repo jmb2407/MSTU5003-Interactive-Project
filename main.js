@@ -325,7 +325,10 @@ function displayAnswers() {
     // Display student's total score on multiple-choice problems
     message += "<br><div class='row'><div class='col-xs-2'>" + "<b>Total Score</b></div>";
     message += "<div class='col-xs-1'><b class='pull-right'>" + student.userScore + " / " + student.possibleScore + "</b></div>";
-    message += "<div class='col-xs-9'>on multiple-choice problems</div></div><hr><br></section>";
+    message += "<div class='col-xs-9'>on multiple-choice problems</div></div>";
+    message += "<br><div class='row'><div class='col-xs-2'>" + "<b>Comments</b></div>";
+    message += "<div class='col-xs-1'><i class='fa fa-lg fa-comments pull-right' aria-hidden='true'></i></div></div>";
+    message += "<hr><br></section>";
     
     message += "</section>" + "</div>" + "</div>" + "</body>";
     
@@ -414,6 +417,10 @@ function getAnswer(event) {
     }
     else {
         console.log("input type is not recognized");
+    }
+    
+    if (document.querySelector('#resetButton').disabled === true) {
+        document.querySelector('#resetButton').disabled = false;       // enable reset button bec/ user has entered some info in the form
     }
     return userAnswer;
 }
@@ -522,8 +529,8 @@ function submitResponses(event) {
 }
 
 
-function resetResponses(event) {
-    student.name = "";                                                      // reset student Object properties
+function resetDatabases() {
+    student.name = "";                                                      // reset all student Object properties
     student.email = "";
     student.date = "";
     student.acceptTerms = false;
@@ -532,10 +539,19 @@ function resetResponses(event) {
     student.userScore = 0;
     student.possibleScore = 0;
     
+    for (question of problems) {                                            // reset answerUser property in problems database
+        question.answerUser = [];
+    }
+}
+
+function resetHTMLInputFields() {
     var inputs = document.getElementsByTagName('input');
     for (var i = 0; i < inputs.length; i++) {
         console.dir(inputs[i]);
         inputs[i].value = "";                                               // clears text input fields (single line)
+        if (inputs[i].type === "checkbox") {
+            inputs[i].checked = false;                                      // clears the "certify answers" checkbox
+        }
     }
     
     var textareas = document.getElementsByTagName('textarea');
@@ -552,5 +568,12 @@ function resetResponses(event) {
     for (i = 0; i < radios.length; i++) {
         radios[i].checked = false;                                          // clears radio select fields (multiple choice)
     }
+}
+
+function resetResponses(event) {
+    
+    resetDatabases();                                                       // student database and problems database (only answerUser prop though)
+    resetHTMLInputFields();
     changeSubmitButton("enable");                                           // enable submit button, change color back to blue
+    document.querySelector('#resetButton').disabled = true;                 // disable submit button now that all info has been erased
 }
