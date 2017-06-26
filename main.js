@@ -1,23 +1,3 @@
-/*
-var text = "hello world";
-var blob = new Blob([text], { type: 'text/plain' });
-var anchor = document.createElement('a');
-
-anchor.download = "studentDatabase.txt";
-anchor.href = window.URL.createObjectURL(blob);
-console.log(anchor.href);
-anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
-console.dir(anchor.dataset);
-anchor.click();
-*/
-
-function sendMail() {
-    var link = 'mailto:joshuabloom@me.com?subject=Student Database Update'
-             +'&body='+'string goes here TESTING';
-    window.location.href = link;
-    console.log("in sendMail");
-}
-
 /***************************************
 READ TEXT FILE FROM GITHUB REPO - student database
 ***************************************/
@@ -230,6 +210,16 @@ function evaluateUserAnswer(problem) {
 }
 
 
+function saveText() {                                       // source: https://gist.github.com/liabru/11263260
+    var text = document.querySelector('#print').innerHTML;
+    var blob = new Blob([text], { type: 'text/plain' });
+    var anchor = document.createElement('a');
+    anchor.download = "studentDatabase.html";
+    anchor.href = window.URL.createObjectURL(blob);
+    anchor.dataset.downloadurl = ['text/plain', anchor.download, anchor.href].join(':');
+    anchor.click();
+}
+
 /******************************************************
 Display User Submission - create new window + HTML tags 
 ******************************************************/
@@ -242,15 +232,18 @@ function displayAnswers() {
     message += "<link type='text/css' rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>";
     message += "<link type='text/css' rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css'>";
     message += "<link type='text/css' rel='stylesheet' href='styles/studentStyle.css'/>";
+    message += "<script language='JavaScript' type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js'>";
+    message += "</script><script language='JavaScript' type='text/javascript' src='https://code.jquery.com/jquery-3.2.1.js'></script>";
+    message += "<script language='JavaScript' type='text/javascript' src='main.js'></script>";
     message += "</head>";
 
     // HTML BODY
-    message += "<body>" + "<div class='container-fluid'>" + "<div class='container-top'>" + "<div class='page-header'>";              // TOP CONTAINER
+    message += "<body id='results'>" + "<div class='container-fluid'>" + "<div class='container-top'>" + "<div class='page-header'>";  // TOP CONTAINER
     message += "<h1 id='title'>Introduction to HTML and CSS</h1><h3 id='subtitle'>Web-Development, Fall 2017</h3></div>" + "</div>";
     message += "<div class='container-main'>" + "<section id='results-window'>" + "<div class='row'>" + "<div class='col-xs-12'>";
-    message += "<h3>Thank you for completing this assignment. Please " + "<input type=button name=print value='save' onClick='window.print()'>";
+    message += "<h3>Thank you for completing this assignment. Please " + "<input type=button name=print value='save' onClick='saveText()'>";
     message += " this receipt for your records.</h3></div></div>";
-    message += "<hr><div class='row'>" + "<div class='col-xs-12'>" + "<h2>Student Info</h2></div></div>"; 
+    message += "<section id='print'><hr><div class='row'>" + "<div class='col-xs-12'>" + "<h2>Student Info</h2></div></div>"; 
     message += "<div class='row'>" + "<div class='col-xs-4'>" + "<div class='row'>" + "<div class='col-xs-4'>";
     message += "<h3><b>Name:</b></h3></div>" + "<div class='col-xs-8'><h3>" + student.name + "</h3></div></div></div>";
     message += "<div class='col-xs-4'>" + "<div class='row'>" + "<div class='col-xs-4'>";
@@ -332,11 +325,12 @@ function displayAnswers() {
     // Display student's total score on multiple-choice problems
     message += "<br><div class='row'><div class='col-xs-2'>" + "<b>Total Score</b></div>";
     message += "<div class='col-xs-1'><b class='pull-right'>" + student.userScore + " / " + student.possibleScore + "</b></div>";
-    message += "<div class='col-xs-9'>on multiple-choice problems</div></div><hr><br>";
+    message += "<div class='col-xs-9'>on multiple-choice problems</div></div><hr><br></section>";
     
     message += "</section>" + "</div>" + "</div>" + "</body>";
-
+    
     DispWin.document.write(message);
+
 }
 
 /***************************************************
@@ -454,6 +448,11 @@ function setTerms() {
 }
 
 
+function disableSubmitButton() {
+    document.querySelector('#submitButton').disabled = true;
+}
+
+
 function verifyStudentInfo() {
     if (student.name === "") {
         return alert("Whoops, looks like you forgot to enter your name!");
@@ -472,7 +471,6 @@ function verifyStudentInfo() {
         return;
     }
 }
-
 
 
 function verifyStudentAnswers() {
@@ -511,6 +509,7 @@ function submitResponses(event) {
     else {
         event.preventDefault();
         displayAnswers();
-        // emailResponses()
+        disableSubmitButton();
+        // email user
     }
 }
