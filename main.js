@@ -1,3 +1,17 @@
+var TEXT_FILE_URL = "https://raw.githubusercontent.com/jmb2407/MSTU5003-Interactive-Project/master/studentDatabase.txt";
+
+var retrievedDatabaseString = "";
+
+$(document).ready(function() {
+    $.get(TEXT_FILE_URL, function(data) {
+        var retrievedDatabaseString = data;
+        // var retrievedDatabaseObject = $(data);     if you wanted to select an HTML page instead
+        console.log(retrievedDatabaseString);
+    });
+});
+
+// loop over string and split by line and then by comma
+
 /***************************************
 Support Resources Navbar - popover()
 ***************************************/
