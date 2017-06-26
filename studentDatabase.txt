@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 testing,there,hello
+=======
+testing,hello,me,you
+josh,math,soccer,tv
+tehre,there,my,friend
+>>>>>>> c43220d0da1f359c408ff69b5a1d589a92b3e75d
