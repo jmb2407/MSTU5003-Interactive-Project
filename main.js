@@ -11,8 +11,8 @@ $(document).ready(function() {
         // var retrievedDatabaseObject = $(data);     if you wanted to select an HTML page instead
         console.log(retrievedDatabaseString);
         var arrayOfLines = retrievedDatabaseString.split("\n");     // split string by line
-        arrayOfLines.push("hello,testing,123,new,new,new"); 
         console.log(arrayOfLines);
+        document.getElementById("classResults").innerText = retrievedDatabaseString;
     });
 });
 
