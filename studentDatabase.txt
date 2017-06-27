@@ -1,5 +1,5 @@
 // Key
-name, email, date, accepted terms, submitted assignment, completion status, score, possible score
+name, email, date, terms accepted, submitted, completion status, score, possible score
 Joshua Bloom , josh@school.org , 06/26/2017 , true , true , 100% , 2 , 4
 Lionel Messi , messi@barca.com , 06/20/2017, true, true, 100%, 4, 4
 Steven Colbert , steven@school.org , 06/24/2017 , true , true , 100% , 3 , 4
