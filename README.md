@@ -17,4 +17,4 @@
     - Receive immediate feedback on both multiple-choice and written response (helps students self-assess)
     - Consolidates and provides information about and links to  online resources for programmers
     - Helpful to have code-snippet on the side while taking a Computer Science test
-    - Have the time to work through problems and tinker with the code before responding to the questions, which allows students to go at their own pace.
+    - Have the time to work through problems and tinker with the code before responding to the questions, which allows students to go at their own pace. 
